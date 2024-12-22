@@ -190,7 +190,6 @@ class MainGUI:
                 period_idx = int(period) - 1  # 1교시는 인덱스 0
                 if 0 <= period_idx < len(self.time_slots):
                     period_indices.append(period_idx)
-                    print(period_idx)
             if period_indices:
                 return day_idx, min(period_indices), max(period_indices)
             return None, None, None
@@ -292,21 +291,15 @@ class MainGUI:
                                 for time in self.added_subjects_tree.item(existing)['values'][7][2:].split(','):
                                     if time in values[7][2:].split(','):
                                         already_added = True
-                                        print("파기")
-                                        print(f"첫번째 {time}")
                                         return
                                 for time in self.added_subjects_tree.item(existing)['values'][8][2:].split(','):
                                     if time in values[8][2:].split(','):
                                         already_added = True
-                                        print("파기")
-                                        print(f"두번째 {time}")
                                         return
                         else:
                             for time in self.added_subjects_tree.item(existing)['values'][7][2:].split(','):
                                 if time in values[7][2:].split(','):
                                     already_added = True
-                                    print("파기")
-                                    print(f"첫번째 {time}")
                                     return
                             
 
