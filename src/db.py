@@ -1,6 +1,6 @@
 import sqlite3
 
-conn = sqlite3.connect('university.db')
+conn = sqlite3.connect('./university.db')
 
 def CreateTable():
     # subjects 테이블 생성
@@ -32,7 +32,6 @@ def InsertSampleData():
 
 
 def GetSubjects():
-    conn = sqlite3.connect('university.db')
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM subjects')
     subjects = cursor.fetchall()

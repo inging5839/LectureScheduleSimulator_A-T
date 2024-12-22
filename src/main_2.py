@@ -2,8 +2,6 @@ import tkinter as tk
 from tkinter import ttk
 import db
 
-# ### 텀1, 텀2 는 시간이 같아도 중복 추가하기 가능하게 구현하기
-
 class MainGUI:
     def __init__(self, root):
         self.root = root
@@ -88,6 +86,10 @@ class MainGUI:
         button_frame = ttk.Frame(self.bottom_left_frame)
         button_frame.pack(side="bottom", fill="x", pady=5)
 
+        # 강의 제거 버튼
+        # ttk.Button(button_frame, text="강의 제거", 
+        #           command=self.remove_from_left).pack(side="left", padx=5)
+
         # 더블클릭 이벤트 바인딩
         self.added_subjects_tree.bind("<Double-1>", lambda e: self.remove_from_left())
 
@@ -118,6 +120,10 @@ class MainGUI:
         # 버튼 프레임 추가
         button_frame = ttk.Frame(self.bottom_right_frame)
         button_frame.pack(side="bottom", fill="x", pady=5)
+
+        # 강의 추가 버튼
+        # ttk.Button(button_frame, text="← 강의 추가", 
+        #           command=self.move_to_left).pack(side="left", padx=5)
 
         # 더블클릭 이벤트 바인딩
         self.full_subjects_tree.bind("<Double-1>", lambda e: self.move_to_left())
@@ -208,29 +214,27 @@ class MainGUI:
 
         # 추가된 과목 테이블의 모든 항목 가져오기
         for item in self.added_subjects_tree.get_children():
-            term = self.added_subjects_tree.item(item)['values'][10]
-            if term == 1 or term == 'None':
-                values = self.added_subjects_tree.item(item)['values']
-                subject_name = values[3]  # 과목명
-                time_str_1 = values[7]      # 강의 시간 (예: "월 1,2,3")
-                time_str_2 = values[8]
-                day_idx_1, start_idx_1, end_idx_1 = self.parse_time_slot(time_str_1)
+            values = self.added_subjects_tree.item(item)['values']
+            subject_name = values[3]  # 과목명
+            time_str_1 = values[7]      # 강의 시간 (예: "월 1,2,3")
+            time_str_2 = values[8]
+            day_idx_1, start_idx_1, end_idx_1 = self.parse_time_slot(time_str_1)
 
-                if None in (day_idx_1, start_idx_1, end_idx_1):
-                    continue
-                # 해당 교시 셀에 과목명 표시
-                for i in range(start_idx_1, end_idx_1 + 1):
-                    cell_key = (day_idx_1, i)
+            if None in (day_idx_1, start_idx_1, end_idx_1):
+                continue
+            # 해당 교시 셀에 과목명 표시
+            for i in range(start_idx_1, end_idx_1 + 1):
+                cell_key = (day_idx_1, i)
+                if cell_key in self.timetable_cells_term_1:
+                    self.timetable_cells_term_1[cell_key].configure(text=subject_name)
+                    self.cell_subject_map_term_1[cell_key] = values
+            if time_str_2 != 'None':
+                day_idx_2, start_idx_2, end_idx_2 = self.parse_time_slot(time_str_2)
+                for i in range(start_idx_2, end_idx_2 + 1):
+                    cell_key = (day_idx_2, i)
                     if cell_key in self.timetable_cells_term_1:
                         self.timetable_cells_term_1[cell_key].configure(text=subject_name)
                         self.cell_subject_map_term_1[cell_key] = values
-                if time_str_2 != 'None':
-                    day_idx_2, start_idx_2, end_idx_2 = self.parse_time_slot(time_str_2)
-                    for i in range(start_idx_2, end_idx_2 + 1):
-                        cell_key = (day_idx_2, i)
-                        if cell_key in self.timetable_cells_term_1:
-                            self.timetable_cells_term_1[cell_key].configure(text=subject_name)
-                            self.cell_subject_map_term_1[cell_key] = values
 
 
     def update_timetable_term_2(self):
@@ -242,28 +246,26 @@ class MainGUI:
 
         # 추가된 과목 테이블의 모든 항목 가져오기
         for item in self.added_subjects_tree.get_children():
-            term = self.added_subjects_tree.item(item)['values'][10]
-            if term == 2 or term == 'None':
-                values = self.added_subjects_tree.item(item)['values']
-                subject_name = values[3]  # 과목명
-                time_str_1 = values[7]      # 강의 시간 (예: "월 1,2,3")
-                time_str_2 = values[8]
-                day_idx_1, start_idx_1, end_idx_1 = self.parse_time_slot(time_str_1)
-                if None in (day_idx_1, start_idx_1, end_idx_1):
-                    continue
-                # 해당 교시 셀에 과목명 표시
-                for i in range(start_idx_1, end_idx_1 + 1):
-                    cell_key = (day_idx_1, i)
+            values = self.added_subjects_tree.item(item)['values']
+            subject_name = values[3]  # 과목명
+            time_str_1 = values[7]      # 강의 시간 (예: "월 1,2,3")
+            time_str_2 = values[8]
+            day_idx_1, start_idx_1, end_idx_1 = self.parse_time_slot(time_str_1)
+            if None in (day_idx_1, start_idx_1, end_idx_1):
+                continue
+            # 해당 교시 셀에 과목명 표시
+            for i in range(start_idx_1, end_idx_1 + 1):
+                cell_key = (day_idx_1, i)
+                if cell_key in self.timetable_cells_term_2:
+                    self.timetable_cells_term_2[cell_key].configure(text=subject_name)
+                    self.cell_subject_map_term_2[cell_key] = values
+            if time_str_2 != 'None':
+                day_idx_2, start_idx_2, end_idx_2 = self.parse_time_slot(time_str_2)
+                for i in range(start_idx_2, end_idx_2 + 1):
+                    cell_key = (day_idx_2, i)
                     if cell_key in self.timetable_cells_term_2:
                         self.timetable_cells_term_2[cell_key].configure(text=subject_name)
                         self.cell_subject_map_term_2[cell_key] = values
-                if time_str_2 != 'None':
-                    day_idx_2, start_idx_2, end_idx_2 = self.parse_time_slot(time_str_2)
-                    for i in range(start_idx_2, end_idx_2 + 1):
-                        cell_key = (day_idx_2, i)
-                        if cell_key in self.timetable_cells_term_2:
-                            self.timetable_cells_term_2[cell_key].configure(text=subject_name)
-                            self.cell_subject_map_term_2[cell_key] = values
 
     def move_to_left(self):
         """과목을 왼쪽 테이블로 이동하고 시간표 업데이트"""
@@ -284,31 +286,42 @@ class MainGUI:
                     already_added = True
                     break
                 
+
+            # 요일과 시간이 겹치는지 확인
+            # for existing in existing_items:
+            #     if self.added_subjects_tree.item(existing)['values'][8] != 'None':
+            #         existing_day_list.append([self.added_subjects_tree.item(existing)['values'][7][0], self.added_subjects_tree.item(existing)['values'][8][0]])
+            #         existing_time_list.append([self.added_subjects_tree.item(existing)['values'][7][1:].split(','), self.added_subjects_tree.item(existing)['values'][8][1:].split(',')])
+                    
+            #     else:
+            #         existing_day_list.append(self.added_subjects_tree.item(existing)['values'][7][0])
+            #         existing_time_list.append([self.added_subjects_tree.item(existing)['values'][7][1:].split(',')])
+
+                
             for existing in existing_items:
-                if self.added_subjects_tree.item(existing)['values'][10] == values[10]:
-                    if self.added_subjects_tree.item(existing)['values'][7][0] == values[7][0]:
-                        if values[8] != 'None':
-                            if self.added_subjects_tree.item(existing)['values'][8][0] == values[8][0]:
-                                for time in self.added_subjects_tree.item(existing)['values'][7][2:].split(','):
-                                    if time in values[7][2:].split(','):
-                                        already_added = True
-                                        print("파기")
-                                        print(f"첫번째 {time}")
-                                        return
-                                for time in self.added_subjects_tree.item(existing)['values'][8][2:].split(','):
-                                    if time in values[8][2:].split(','):
-                                        already_added = True
-                                        print("파기")
-                                        print(f"두번째 {time}")
-                                        return
-                        else:
+                if self.added_subjects_tree.item(existing)['values'][7][0] == values[7][0]:
+                    if values[8] != 'None':
+                        if self.added_subjects_tree.item(existing)['values'][8][0] == values[8][0]:
                             for time in self.added_subjects_tree.item(existing)['values'][7][2:].split(','):
                                 if time in values[7][2:].split(','):
                                     already_added = True
                                     print("파기")
                                     print(f"첫번째 {time}")
                                     return
-                            
+                            for time in self.added_subjects_tree.item(existing)['values'][8][2:].split(','):
+                                if time in values[8][2:].split(','):
+                                    already_added = True
+                                    print("파기")
+                                    print(f"두번째 {time}")
+                                    return
+                    else:
+                        for time in self.added_subjects_tree.item(existing)['values'][7][2:].split(','):
+                            if time in values[7][2:].split(','):
+                                already_added = True
+                                print("파기")
+                                print(f"첫번째 {time}")
+                                return
+                        
 
             if not already_added:
                 # 좌측 트리뷰에 추가 (정원 제외하고 추가)
